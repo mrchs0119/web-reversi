@@ -3,6 +3,9 @@ import ReactDOM from "react-dom";
 import Konva from 'konva';
 import _ from "lodash";
 import { Stage, Layer, Circle, Rect } from 'react-konva';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
+
 export default function game_init(root, channel, user) {
 	ReactDOM.render(<Reversi channel={channel} user={user} />, root);
 }
@@ -13,26 +16,14 @@ let RADIUS=26;
 let SIZE=60;
 
 function Tile(props){
-  var x = (props.row + 0.5)*SIZE + OFFSET;
-  var y = (props.column + 0.5)*SIZE +OFFSET;
+  var x = (props.column + 0.5)*SIZE + OFFSET;
+  var y = (props.row + 0.5)*SIZE +OFFSET;
   return <Circle radius={RADIUS} x={x} y={y} fill = {props.color} stroke = "black" strokeWidth={1} />;
 }
-function tiles(props){
-  var t = []
-  for (var j = 0; j < 8; j++){
-    for (var i = 0; i < 8; i++){
-        var x = (j + 0.5)*SIZE + OFFSET;
-        var y = (i + 0.5)*SIZE +OFFSET;
-	t.push(<Circle radius={RADIUS} x={x} y={y} 
-		fill = {props.tiles[i][j]} stroke = "black" strokeWidth={1} />);
 
-    }
-  }
-  return t;
-}
 
 function Square(props){
-  return <Rect x={OFFSET + SIZE * props.row} y={OFFSET + SIZE * props.column} 
+  return <Rect x={OFFSET + SIZE * props.column} y={OFFSET + SIZE * props.row} 
 	width = {SIZE} height={SIZE} fill="green" stroke="black" strokeWidth={1} 
 	onClick={()=>props.onClick(props.row, props.column)} />; 
 }
@@ -69,11 +60,13 @@ function StatusButtons(props){
 // Add onclick handler
     return <button id="join" onClick={()=>props.onClick("joinP")}> Join the Game </button>;
   }
-  else {
-    return <div>
-		  <button id='resignation'>Resignation</button>
-	  	<button id='undo'>Undo</button>
-	</div>;
+  else if (props.gameStatus == "on"){
+	  return <div>
+		  <button id='resignation' onClick={()=>props.onClick("resignation")}>Resignation</button>
+		  <button id='undo' onClick={()=>props.onClick("undo")}>Undo</button>
+		</div>;
+  }else {
+  	return <button id="join" onClick={()=>props.onClick("reset")}>New Game</button>
   }
 }
 
@@ -92,6 +85,8 @@ class Reversi extends React.Component {
 	    players:[],
 	    gameStatus:"waiting",
 	    undoStack:[],
+            valid_moves: [],
+
     };
 	  
 	  this.channel.on("update", (game) => {
@@ -113,10 +108,7 @@ class Reversi extends React.Component {
       }
       ret.push(row);
     }
-    ret[3][4] = "white";
-    ret[4][3] = "white";
-    ret[3][3] = "black";
-    ret[4][4] = "black";
+    
 
     return ret;
   }
@@ -126,21 +118,40 @@ class Reversi extends React.Component {
     var colors = this.state.present;
     console.log(colors);
     console.log(this.state.gameStatus);
-    for (var j = 0; j < 8; j ++){
-      for (var i = 0; i < 8; i++){
+    for (var i = 0; i < 8; i ++){
+      for (var j = 0; j < 8; j++){
       	board.push(<Square row={i} column={j} key={i*8+j} onClick={(i, j)=>this.handleClick(i,j)}/>);
 	//board.push(<Tile color={colors[j][i]} row={i} column={j} key={m*8+n+64} />);	
-	      if (colors[j][i] != null){
-	  board.push(<Tile color={colors[j][i]} row={i} column={j} key={i*8+j+64} />);
+	      if (colors[i][j] != null){
+	  board.push(<Tile color={colors[i][j]} row={i} column={j} key={i*8+j+64} />);
 	}
       }
     }
        return board;
   }
   handleClick(i, j){
-    this.channel.push("click", {user: this.user, row: j, col: i})
+    let size = 8;
+    let index = i* size + j;
+    let user;
+    if (this.state.turn == "black") {
+      if(this.user != this.state.player1){
+        this.notifyTurn();
+	return;
+      }
+    }else{
+      if(this.user != this.state.player2){
+        this.notifyTurn();
+	return;
+      }
+    }
+    if (!this.state.valid_moves.includes(index)) {
+      this.notify();
+      return;
+    }else{
+      this.channel.push("click", {user: this.user, row: i, col: j})
 	.receive("ok", this.got_view.bind(this));
-    console.log("click"+i+"/"+j);
+        console.log("click"+i+"/"+j);
+    }
   }
     clickButton(mes){
 	  this.channel.push(mes, {user: this.user})
@@ -152,12 +163,30 @@ class Reversi extends React.Component {
     console.log("send " + txt);
   }
 
+
+  handleExit(){
+    this.channel.push("exit", {user: this.user})
+	  .receive("ok", this.got_view.bind(this));
+    console.log(this.user + " exit");
+  }
+
   got_view(view) {
     console.log("new view", view);
     this.setState(view.game);
     console.log(this.state.text);
   }
- 
+
+  notify() {
+    toast("Invalid MOVE!", {
+      position: toast.POSITION.BOTTOM_RIGHT
+    });
+  }
+
+   notifyTurn() {
+    toast("It's not your turn!", {
+      position: toast.POSITION.BOTTOM_RIGHT
+    });
+  } 
   showTurn() {
     return <Turn turn={this.state.turn} />
   
@@ -174,7 +203,9 @@ class Reversi extends React.Component {
       <p id="player1">{this.state.player1}</p>
       <p id="player2">{this.state.player2}</p>
       <p id="watch">watches: {this.state.players.length}</p>
+      <button id="exit" onClick={()=> this.handleExit()}>Exit</button>
       <Chat text={this.state.text} onClick={(txt)=>this.sendButton(txt)}/>
+      <ToastContainer className="title1" />
     </div>;
   }
 }

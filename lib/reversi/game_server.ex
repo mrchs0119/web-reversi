@@ -38,11 +38,27 @@ defmodule Reversi.GameServer do
  
   def user_join(name, user) do 
     GenServer.call(reg(name), {:user_join, name, user})
-  end  
+  end 
+
+  def reset(name, user) do 
+    GenServer.call(reg(name), {:reset, name, user})
+  end
+  def resignation(name, user) do 
+    GenServer.call(reg(name), {:resignation, name, user})
+  end
+
+  def undo(name, user) do 
+    GenServer.call(reg(name), {:undo, name, user})
+  end
 
   def send(name, user, txt) do 
     GenServer.call(reg(name), {:send, name, user, txt})
-  end
+  end 
+
+  def user_exit(name, user) do 
+    GenServer.call(reg(name), {:user_exit, name, user})
+  end  
+  
   
   def handle_call({:user_join, name, user}, _from, game) do 
     game = Reversi.Game.user_join(game, user)
@@ -70,5 +86,29 @@ defmodule Reversi.GameServer do
     Reversi.BackupAgent.put(name, game)
     {:reply, game, game}
   end
+
+  def handle_call({:user_exit, name, user}, _from, game) do 
+    game = Reversi.Game.user_exit(game, user)
+    Reversi.BackupAgent.put(name, game)
+    {:reply, game, game}
+  end  
+
+  def handle_call({:reset, name, user}, _from, game) do 
+    game = Reversi.Game.reset(game, user)
+    Reversi.BackupAgent.put(name, game)
+    {:reply, game, game}
+  end 
+  def handle_call({:resignation, name, user}, _from, game) do 
+    game = Reversi.Game.resignation(game, user)
+    Reversi.BackupAgent.put(name, game)
+    {:reply, game, game}
+  end   
+
+
+  def handle_call({:undo, name, user}, _from, game) do 
+    game = Reversi.Game.undo(game, user)
+    Reversi.BackupAgent.put(name, game)
+    {:reply, game, game}
+  end  
 
 end

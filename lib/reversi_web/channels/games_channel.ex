@@ -31,21 +31,54 @@ defmodule ReversiWeb.GamesChannel do
 	socket = assign(socket, :game, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
-def handle_in("joinP", %{"user"=>user}, socket) do 
+  def handle_in("joinP", %{"user"=>user}, socket) do 
 	name = socket.assigns[:name]
 	game = GameServer.joinP(name,user)
 	socket = assign(socket, :game, game)
 	broadcast socket, "update", game	
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
-def handle_in("send", %{"user"=>user, "txt"=> txt}, socket) do 
+def handle_in("reset", %{"user"=>user}, socket) do 
+	name = socket.assigns[:name]
+	game = GameServer.reset(name,user)
+	socket = assign(socket, :game, game)
+	broadcast socket, "update", game	
+    {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
+  end
+
+def handle_in("undo", %{"user"=>user}, socket) do 
+	name = socket.assigns[:name]
+	game = GameServer.undo(name,user)
+	socket = assign(socket, :game, game)
+	broadcast socket, "update", game	
+    {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
+  end
+
+def handle_in("resignation", %{"user"=>user}, socket) do 
+	name = socket.assigns[:name]
+	game = GameServer.resignation(name,user)
+	socket = assign(socket, :game, game)
+	broadcast socket, "update", game	
+    {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
+  end
+
+
+
+
+  def handle_in("send", %{"user"=>user, "txt"=> txt}, socket) do 
 	name = socket.assigns[:name]
 	game = GameServer.send(name,user, txt)
 	broadcast socket, "update", game
 	socket = assign(socket, :game, game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
-
+  def handle_in("exit", %{"user"=>user}, socket) do 
+	name = socket.assigns[:name]
+	game = GameServer.user_exit(name,user)
+	broadcast socket, "update", game
+	socket = assign(socket, :game, game)
+	{:stop, :shutdown, socket}
+  end
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("ping", payload, socket) do
