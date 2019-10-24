@@ -3,14 +3,14 @@ server {
     listen [::]:80;
 
     # TODO: This should be your server name.
-    server_name reversi.yrn95.fun;
+    server_name reversi.mrchs0119.fun;
 
     location / {
-        proxy_pass http://localhost:5000;
+        proxy_pass http://localhost:5500;
     }
 
     location /socket {
-        proxy_pass http://localhost:5000;
+        proxy_pass http://localhost:5500;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";	 	 

@@ -147,6 +147,9 @@ client_view =%{
 
   def reset(game, user) do 
     game |> Map.put(:present, initTiles()) |> Map.put(:gameStatus, "waiting")
+         |> Map.put(:turn, "black")
+         |> Map.put(:undo1, 1)
+         |> Map.put(:undo2, 2)
 		
   end
 
