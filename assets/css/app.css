@@ -12,10 +12,8 @@
   margin-top: 20px;
 }
 
-form {
- /* text-align: center;
-  background-color: lightblue;
-  color: white;*/
+#enter {
+ text-align: center;
 }
 #text{
   white-space: pre-wrap;
@@ -67,19 +65,6 @@ overflow:auto;
   display: inline-flex;
 }
 
-#list{
-  padding-left: 200px;
-}
-
-#btn{
-border-style: solid;
-border-radius: 20px;
-border-color: green;
-background-color: lightgreen;
-font-size: 30px;
-margin-left: 130px;
-margin-top: 20px;
-}
 
 #game_btn{
   background-color: green;
@@ -88,9 +73,6 @@ margin-top: 20px;
   width:50px;
 }
 
-.board_table{
-  margin-left: 80px;
-}
 #watch{
   position:absolute;
   left: 800px;
@@ -113,6 +95,3 @@ margin-top: 20px;
   top: 195px;
 }
 
-#winner{
-  margin-left: 100px;
-}
