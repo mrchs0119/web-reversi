@@ -10,7 +10,11 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :reversi, ReversiWeb.Endpoint,
-  url: [host: "example.com", port: 80],
+  server: true,
+  root: ".",
+  version: Application.spec(:phoenix_distillery, :vsn),
+  http: [:inet6, port: {:system, "PORT"}],
+  url: [host: "reversi.yrn95.fun", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
@@ -52,4 +56,14 @@ config :logger, level: :info
 
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
-import_config "prod.secret.exs"
+# import_config "prod.secret.exs"
+
+path = Path.expand("~/.config/reversi.secret")
+unless File.exists?(path) do
+  secret = Base.encode16(:crypto.strong_rand_bytes(32))
+  File.write!(path, secret)
+end
+secret = File.read!(path)
+
+config :reversi, ReversiWeb.Endpoint,
+  secret_key_base: secret
