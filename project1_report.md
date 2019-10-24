@@ -205,10 +205,10 @@ as a result of comparison in turn and player name. and function validMove()
 and validMoveLst() will help click() to make sure if the player's move 
 is valid or not. validMoveLst() return all the valid positions(row*8+col) 
 on the board for the corresponding player. If a move is valid the function 
-getFlips() will get the list of tile which need to flip for all the directions 
-and the function 
+getFlips() will get the list of positions %{row:r,col:c} of tiles which need 
+to be flipped for all the directions and the function 
 flipTiles will iterate the list the flips the tile by change tiles' color. 
-If there is no vali move for the player, hand over the game to the opponent by
+If there is no valid move for the player, hand over the game to the opponent by
 changing the turn state. If the opponent has no valid turn either, game over.
 And the function checkGameStatus() will update the game status and check the 
 winner if game is over.
