@@ -41,14 +41,14 @@ rows have to be flipped
 opponent repeats another move
 #### Rules
 Besides the existed rules in Reversi, we have added undo and resignation 
-operation. 
+operations. 
 
 If a player claims resignation, the opponent will be the winner, 
 game ends and both of them will be visitors again. The "Exit" plays the same 
 as resignation for players, along with disconnection. 
 
-Each player have only one chance for undo. It only works when there is at 
-most one move has been made. It will not have an effect if there's no move to
+Each player has only one chance for undo. It only works when there is at 
+least one move has been made. It will not have an effect if there's no move to
 undo or no chance to do so. 
 A player can only call undo in his turn,
 calling undo before the making a movement in the turn. It will 
@@ -82,7 +82,7 @@ Besides the information about the game room and user names, the game page
 basically consists of 2 parts.
 ##### Game board
 
-The game is initialized in a 8X8 squares, along with 2 tiles in the center, 
+The game is initialized in a 8X8 squares, along with 4 tiles in the center, 
 black and white respectively. When players do a valid click, the 
 corresponding move will be made on the board. 
 Information about the game lies around the board:
@@ -107,7 +107,7 @@ pop up with a red boundary.
      game" means a initialized board will be loaded.
 
 ##### Chat Zone
-All the users in the game room can ba a part of the chatting interaction. 
+All the users in the game room can be a part of the chatting interaction. 
 Users simply input the message and send, broadcasting it to the entire room. 
 And the system message will also be broadcast in the chat zone in the format 
 [...], when a user enters / leaves the room and end of the game. There is 
