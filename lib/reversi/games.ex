@@ -150,7 +150,8 @@ client_view =%{
          |> Map.put(:turn, "black")
          |> Map.put(:undo1, 1)
          |> Map.put(:undo2, 2)
-		
+         |> Map.put(:player1, nil) 
+         |> Map.put(:player2, nil)		
   end
 
   def undo(game, user) do
