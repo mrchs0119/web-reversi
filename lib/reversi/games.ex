@@ -145,13 +145,19 @@ client_view =%{
     end
   end
 
-  def reset(game, user) do 
+  def reset(game, user) do
+    players = [game.player1|game.players]
+    nplayers = [game.player2|players]
+    valid_moves = validMoveLst(initTiles(),"black")
     game |> Map.put(:present, initTiles()) |> Map.put(:gameStatus, "waiting")
          |> Map.put(:turn, "black")
          |> Map.put(:undo1, 1)
          |> Map.put(:undo2, 2)
          |> Map.put(:player1, nil) 
-         |> Map.put(:player2, nil)		
+         |> Map.put(:player2, nil)
+         |> Map.put(:valid_moves, valid_moves)
+         |> Map.put(:players, nplayers)
+	
   end
 
   def undo(game, user) do
