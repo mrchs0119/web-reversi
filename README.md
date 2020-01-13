@@ -12,6 +12,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 ## Snapshot
 ![room & user](https://github.com/mrchs0119/web-reversi/blob/master/WeChat80d2e440088d7a960c029c70736934a6.png)
+![game](https://github.com/mrchs0119/web-reversi/blob/master/WeChat6f1fa6e55b7559afa5d7cf9ccad286a2.png)
 
 ## Learn more
 
